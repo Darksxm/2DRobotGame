@@ -15,33 +15,44 @@ public static class MovementParameter
 
 public class BasicMovement : MonoBehaviour
 {
-    /// <summary>
-    /// Public Fields Value
-    /// </summary>
+    [Header("Public Value")]
+    public float jumpMultiplier;
 
-    /// <summary>
-    /// Private Fields Value
-    /// </summary>
+    public float movementMultiplier;
+
+    [Header("Private Info")]
     private float inputHorizontal;
-    private float movementMultiplier;
+
+    [SerializeField]
     private float currentMovementSpeed;
-    private float jumpMultiplier;
+
+    [SerializeField]
     private float currentJumpPower;
+
+    [SerializeField]
+    private float crouchSpeed;
+
     private float currentHeight;
     private float maxJumpHeight;
 
+    [Header("Overall Infos")]
     /// <summary>
     /// Other Operators
     /// </summary>
     [SerializeField]
     private LayerMask _groundLayer;
-    private bool _isGrounded;
+
     private Rigidbody2D rb;
     public Transform playerTransform;
+    public Transform playerFeetTransform;
 
     public Collider2D _footCollider;
     public Animator anim;
 
+    private bool _isGrounded;
+    private bool _isJumping;
+    private bool _isCrouching;
+    private bool _isFalling;
 
     private void Awake()
     {
@@ -58,8 +69,6 @@ public class BasicMovement : MonoBehaviour
         Debug.Log(MovementParameter.movementState);
     }
 
-   
-
     /// <summary>
     /// Check if player is grounded
     /// </summary>
@@ -67,7 +76,7 @@ public class BasicMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        anim.SetBool("isGrounded",_isGrounded);
+        anim.SetBool("isGrounded", _isGrounded);
         if (collision.IsTouchingLayers(_groundLayer))
         {
             _isGrounded = true;
@@ -79,14 +88,17 @@ public class BasicMovement : MonoBehaviour
         }
     }
 
+    public void OverAllBoolsLaws()
+    {
+    }
+
     /// <summary>
     /// Makes the changes in movement state automatic according to the situations
-    /// the first line calculate the body orientation based on the inputHorizontal so that the body 
+    /// the first line calculate the body orientation based on the inputHorizontal so that the body
     /// faces the sens it is going to
     /// </summary>
     private void MovementHandler()
     {
-
         if (_isGrounded)
         {
             MovementParameter.movementState = MovementState.run;
@@ -114,25 +126,20 @@ public class BasicMovement : MonoBehaviour
         switch (MovementParameter.movementState)
         {
             case MovementState.run:
-                movementMultiplier = 1f;
-                jumpMultiplier = 3f;
-                Move(inputHorizontal);
-                Jump();
+                Move(inputHorizontal, movementMultiplier);
+                Jump(jumpMultiplier);
                 break;
 
             case MovementState.crouch:
-                movementMultiplier = 0.5f;
-                jumpMultiplier = 0f;
-                Move(inputHorizontal);
-                anim.SetBool("Crouching", true);
+                Move(inputHorizontal, movementMultiplier / 4);
+                Crouch(movementMultiplier);
+                break;
+
+            case MovementState.falling:
+                Falling();
                 break;
 
             case MovementState.climbing: break;
-            case MovementState.falling:
-                movementMultiplier = 0f;
-                jumpMultiplier = 0f;
-                Falling();
-                break;
         }
     }
 
@@ -140,12 +147,11 @@ public class BasicMovement : MonoBehaviour
     /// Initialize the Running movement
     /// </summary>
     /// <param name="horizontalInput"></param>
-    private void Move(float horizontalInput)
+    private void Move(float horizontalInput, float _movementMultiplier)
     {
-        currentMovementSpeed = MovementParameter.movementConstant * movementMultiplier;
+        currentMovementSpeed = MovementParameter.movementConstant * _movementMultiplier;
         Vector2 moveDirection = new Vector2(horizontalInput, 0f);
         rb.velocity = new Vector2(moveDirection.x * currentMovementSpeed, rb.velocity.y);
-        // Rotate the character based on input
         // Rotate the character based on input
         if (Mathf.Abs(horizontalInput) > 0.1f)
         {
@@ -168,28 +174,34 @@ public class BasicMovement : MonoBehaviour
     /// Initializing the jumping mechanism
     /// The jumping hight is influenced by the amount of time the space bar is clicked
     /// </summary>
-    private void Jump()
+    private void Jump(float _jumpMultiplier)
     {
-        currentJumpPower = MovementParameter.jumpingPowerConstant * jumpMultiplier;
-        if (Input.GetButtonDown("Jump") && _isGrounded)
+        currentJumpPower = MovementParameter.jumpingPowerConstant * _jumpMultiplier;
+        _isJumping = Input.GetButtonDown("Jump")&&_isGrounded;
+        if (_isJumping)
         {
-            rb.velocity = new Vector2(rb.velocity.x, currentJumpPower);
-
-            if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-            }
-            CalculateMaxHeight();
-           
+        CalculateMaxHeight();
+            _isJumping = !_isJumping;
             anim.SetTrigger("Jumping");
+            rb.velocity = new Vector2(rb.velocity.x, currentJumpPower);
         }
     }
 
+    /// <summary>
+    /// Trigger the Falling animation
+    /// </summary>
     private void Falling()
     {
-        anim.SetTrigger("Falling");
+        anim.SetBool("Falling", _isFalling);
+        if (!_isJumping)
+        {
+            _isFalling = true;
+        }
+        if (_isGrounded)
+        {
+            _isFalling = false;
+        }
     }
-
 
     /// <summary>
     /// Calculate the maximum jumping height the player can jump at according to the current rb gravity.
@@ -197,8 +209,40 @@ public class BasicMovement : MonoBehaviour
     private void CalculateMaxHeight()
     {
         float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale; // Assuming gravity is acting downward
-        maxJumpHeight = (currentJumpPower * currentJumpPower) / (2 * g);
-        currentHeight = Mathf.Max(currentHeight, transform.position.y);
+
+        if (_isJumping)
+        {
+            //Ascending
+            Debug.Log("PlayerJumped");
+            //currentHeight = Mathf.Max(currentHeight, playerFeetTransform.position.y);
+            maxJumpHeight = (currentJumpPower * currentJumpPower) / (2 * g);
+            currentHeight = Mathf.Clamp(maxJumpHeight - (maxJumpHeight - playerFeetTransform.position.y), 0f, maxJumpHeight);
+            if (currentHeight >= maxJumpHeight)
+            {
+                Falling();
+            }
+        }
+        if (_isGrounded)
+        {
+            //reset current height
+            currentHeight = 0f;
+        }
     }
 
+    private void Crouch(float _movementMultiplier)
+    {
+        anim.SetBool("Crouching", _isCrouching);
+        _isCrouching = _isGrounded && Input.GetKeyDown(KeyCode.LeftControl);
+        if (_isCrouching)
+        {
+            movementMultiplier = crouchSpeed;
+        }
+        else 
+        {
+            _isCrouching = false;
+        }
+    }
+
+    // have to fix the bool problem of when jumping and falling DOES NOT TURN OFF
+    // crouching (only for 1s and goes out of animation because it is not registering a constant input of isgrounded = true)
 }
