@@ -63,33 +63,40 @@ public class BasicMovement : MonoBehaviour
     private void Update()
     {
         inputHorizontal = Input.GetAxisRaw("Horizontal");
-        OnTriggerEnter2D(_footCollider);
         MovementHandler();
-        SwitchMovementMechanism();
         Debug.Log(MovementParameter.movementState);
     }
+
+    /*  private void OnTriggerEnter2D(Collider2D collision)
+      {
+          _isFalling = false;
+      }*/
 
     /// <summary>
     /// Check if player is grounded
     /// </summary>
     /// <param name="collision"></param>
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        anim.SetBool("isGrounded", _isGrounded);
-        if (collision.IsTouchingLayers(_groundLayer))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
+            _isFalling = false;
             _isGrounded = true;
             Debug.Log("Character on the floor");
         }
-        else
-        {
-            _isGrounded = false;
-        }
+        SetBoolStates();
     }
 
-    public void OverAllBoolsLaws()
+    private void OnTriggerExit2D(Collider2D collision)
     {
+        _isGrounded = false;
+        SetBoolStates();
+    }
+
+    public void SetBoolStates()
+    {
+        anim.SetBool("isGrounded", _isGrounded);
+        anim.SetBool("Falling", _isFalling);
     }
 
     /// <summary>
@@ -107,14 +114,11 @@ public class BasicMovement : MonoBehaviour
         {
             MovementParameter.movementState = MovementState.crouch;
         }
-        if (!_isGrounded && currentHeight >= maxJumpHeight)
+        if (!_isGrounded && rb.velocity.y < 0)
         {
             MovementParameter.movementState = MovementState.falling;
         }
-        else if (!_isGrounded)
-        {
-            MovementParameter.movementState = MovementState.falling;
-        }
+        SwitchMovementMechanism();
     }
 
     /// <summary>
@@ -177,13 +181,12 @@ public class BasicMovement : MonoBehaviour
     private void Jump(float _jumpMultiplier)
     {
         currentJumpPower = MovementParameter.jumpingPowerConstant * _jumpMultiplier;
-        _isJumping = Input.GetButtonDown("Jump")&&_isGrounded;
+        _isJumping = Input.GetButtonDown("Jump") && _isGrounded;
         if (_isJumping)
         {
-        CalculateMaxHeight();
             _isJumping = !_isJumping;
-            anim.SetTrigger("Jumping");
             rb.velocity = new Vector2(rb.velocity.x, currentJumpPower);
+            anim.SetTrigger("Jumping");
         }
     }
 
@@ -192,41 +195,9 @@ public class BasicMovement : MonoBehaviour
     /// </summary>
     private void Falling()
     {
+        _isFalling = true;
+
         anim.SetBool("Falling", _isFalling);
-        if (!_isJumping)
-        {
-            _isFalling = true;
-        }
-        if (_isGrounded)
-        {
-            _isFalling = false;
-        }
-    }
-
-    /// <summary>
-    /// Calculate the maximum jumping height the player can jump at according to the current rb gravity.
-    /// </summary>
-    private void CalculateMaxHeight()
-    {
-        float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale; // Assuming gravity is acting downward
-
-        if (_isJumping)
-        {
-            //Ascending
-            Debug.Log("PlayerJumped");
-            //currentHeight = Mathf.Max(currentHeight, playerFeetTransform.position.y);
-            maxJumpHeight = (currentJumpPower * currentJumpPower) / (2 * g);
-            currentHeight = Mathf.Clamp(maxJumpHeight - (maxJumpHeight - playerFeetTransform.position.y), 0f, maxJumpHeight);
-            if (currentHeight >= maxJumpHeight)
-            {
-                Falling();
-            }
-        }
-        if (_isGrounded)
-        {
-            //reset current height
-            currentHeight = 0f;
-        }
     }
 
     private void Crouch(float _movementMultiplier)
@@ -237,7 +208,7 @@ public class BasicMovement : MonoBehaviour
         {
             movementMultiplier = crouchSpeed;
         }
-        else 
+        else
         {
             _isCrouching = false;
         }
