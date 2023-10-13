@@ -31,6 +31,8 @@ public class BasicMovement : MonoBehaviour
 
     [SerializeField]
     private float crouchSpeed;
+    [SerializeField]
+    private float jumpMovementSpeed;
 
     private float currentHeight;
     private float maxJumpHeight;
@@ -97,6 +99,7 @@ public class BasicMovement : MonoBehaviour
     {
         anim.SetBool("isGrounded", _isGrounded);
         anim.SetBool("Falling", _isFalling);
+       
     }
 
     /// <summary>
@@ -136,7 +139,7 @@ public class BasicMovement : MonoBehaviour
 
             case MovementState.crouch:
                 Move(inputHorizontal, movementMultiplier / 4);
-                Crouch(movementMultiplier);
+                Crouch();
                 break;
 
             case MovementState.falling:
@@ -185,7 +188,8 @@ public class BasicMovement : MonoBehaviour
         if (_isJumping)
         {
             _isJumping = !_isJumping;
-            rb.velocity = new Vector2(rb.velocity.x, currentJumpPower);
+            movementMultiplier = jumpMovementSpeed;
+            rb.velocity = new Vector2(movementMultiplier, currentJumpPower);
             anim.SetTrigger("Jumping");
         }
     }
@@ -196,22 +200,27 @@ public class BasicMovement : MonoBehaviour
     private void Falling()
     {
         _isFalling = true;
-
+        if (_isFalling)
+        {
+            movementMultiplier = jumpMovementSpeed;
+        }
         anim.SetBool("Falling", _isFalling);
     }
 
-    private void Crouch(float _movementMultiplier)
+    private void Crouch()
     {
-        anim.SetBool("Crouching", _isCrouching);
-        _isCrouching = _isGrounded && Input.GetKeyDown(KeyCode.LeftControl);
+        _isCrouching = _isGrounded && Input.GetKey(KeyCode.LeftControl);
+
+
         if (_isCrouching)
         {
             movementMultiplier = crouchSpeed;
         }
-        else
+        if(Input.GetKeyUp(KeyCode.LeftControl)||!_isGrounded)
         {
             _isCrouching = false;
         }
+        anim.SetBool("Crouching", _isCrouching);
     }
 
     // have to fix the bool problem of when jumping and falling DOES NOT TURN OFF
