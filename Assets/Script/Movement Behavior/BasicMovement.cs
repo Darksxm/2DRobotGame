@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum MovementState
 {
-    run, crouch, sprint, falling, climbing , sliding , hanging
+    Regular, Crouching, sprint, Falling, climbing, Sliding, hanging
 }
 
 public static class MovementParameter
@@ -17,25 +17,28 @@ public class BasicMovement : MonoBehaviour
 {
     [Header("Public Value")]
     public float jumpMultiplier;
+
     public float movementMultiplier;
 
     [Header("Private Info")]
     private float inputHorizontal;
+
     [SerializeField]
     private float currentMovementSpeed;
+
     [SerializeField]
     private float currentJumpPower;
+
     [SerializeField]
     private float crouchSpeed;
+
     [SerializeField]
     private float jumpMovementSpeed;
-    private float xColliderSize, yColliderSize;
+
 
     [Header("Overall Infos")]
-    /// <summary>
-    /// Other Operators
-    /// </summary>
     public Animator anim;
+
     private Rigidbody2D rb;
     public BoxCollider2D GroundCheckCollider;
     public BoxCollider2D playerCollider2D;
@@ -50,11 +53,10 @@ public class BasicMovement : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();   
+        rb = GetComponent<Rigidbody2D>();
         playerTransform = transform;
-        
     }
-  
+
     private void Update()
     {
         inputHorizontal = Input.GetAxisRaw("Horizontal");
@@ -74,20 +76,21 @@ public class BasicMovement : MonoBehaviour
             _isGrounded = true;
             Debug.Log("Character on the floor");
         }
-        SetBoolStates();
+        SetBoolAnimatorStates();
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         _isGrounded = false;
-        SetBoolStates();
+        _isCrouching = false;
+        SetBoolAnimatorStates();
     }
 
-    public void SetBoolStates()
+    public void SetBoolAnimatorStates()
     {
         anim.SetBool("isGrounded", _isGrounded);
         anim.SetBool("Falling", _isFalling);
-       
+        anim.SetBool("Crouching", _isCrouching);
     }
 
     /// <summary>
@@ -99,19 +102,22 @@ public class BasicMovement : MonoBehaviour
     {
         if (_isGrounded)
         {
-            MovementParameter.movementState = MovementState.run;
+            MovementParameter.movementState = MovementState.Regular;
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                MovementParameter.movementState = MovementState.Crouching;
+            }
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                MovementParameter.movementState = MovementState.Sliding;
+            }
         }
-        if (_isGrounded && Input.GetKeyDown(KeyCode.LeftControl))
+        if (!_isGrounded)
         {
-            MovementParameter.movementState = MovementState.crouch;
-        }
-        if (!_isGrounded && rb.velocity.y < 0)
-        {
-            MovementParameter.movementState = MovementState.falling;
-        }
-        if(_isGrounded && Input.GetKey(KeyCode.LeftShift))
-        {
-            MovementParameter.movementState = MovementState.sliding;
+            if (rb.velocity.y < 0)
+            {
+                MovementParameter.movementState = MovementState.Falling;
+            }
         }
         SwitchMovementMechanism();
     }
@@ -124,21 +130,21 @@ public class BasicMovement : MonoBehaviour
     {
         switch (MovementParameter.movementState)
         {
-            case MovementState.run:
+            case MovementState.Regular:
                 Move(inputHorizontal, movementMultiplier);
                 Jump(jumpMultiplier);
                 break;
 
-            case MovementState.crouch:
+            case MovementState.Crouching:
                 Move(inputHorizontal, movementMultiplier / 4);
                 Crouch();
                 break;
 
-            case MovementState.falling:
+            case MovementState.Falling:
                 Falling();
                 break;
 
-            case MovementState.sliding:
+            case MovementState.Sliding:
                 Sliding();
                 break;
 
@@ -205,27 +211,24 @@ public class BasicMovement : MonoBehaviour
 
     private void Crouch()
     {
-        _isCrouching = _isGrounded && Input.GetKeyDown(KeyCode.LeftControl);
-
-
+        _isCrouching = _isGrounded && Input.GetKeyDown(KeyCode.LeftControl);        
         if (_isCrouching)
         {
             movementMultiplier = crouchSpeed;
             playerCollider2D.enabled = false;
             crouchCollider2D.enabled = true;
-
         }
         else
         {
             playerCollider2D.enabled = true;
             crouchCollider2D.enabled = false;
-        }
+            _isCrouching = false;
+        }      
         anim.SetBool("Crouching", _isCrouching);
     }
 
     private void Sliding()
     {
-
     }
 
     // have to fix the bool problem of when jumping and falling DOES NOT TURN OFF
