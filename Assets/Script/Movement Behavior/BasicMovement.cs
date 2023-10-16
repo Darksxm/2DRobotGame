@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum MovementState
 {
-    run, crouch, sprint, falling, climbing
+    run, crouch, sprint, falling, climbing , sliding , hanging
 }
 
 public static class MovementParameter
@@ -17,39 +17,31 @@ public class BasicMovement : MonoBehaviour
 {
     [Header("Public Value")]
     public float jumpMultiplier;
-
     public float movementMultiplier;
 
     [Header("Private Info")]
     private float inputHorizontal;
-
     [SerializeField]
     private float currentMovementSpeed;
-
     [SerializeField]
     private float currentJumpPower;
-
     [SerializeField]
     private float crouchSpeed;
     [SerializeField]
     private float jumpMovementSpeed;
-
-    private float currentHeight;
-    private float maxJumpHeight;
+    private float xColliderSize, yColliderSize;
 
     [Header("Overall Infos")]
     /// <summary>
     /// Other Operators
     /// </summary>
-    [SerializeField]
-    private LayerMask _groundLayer;
-
+    public Animator anim;
     private Rigidbody2D rb;
+    public BoxCollider2D GroundCheckCollider;
+    public BoxCollider2D playerCollider2D;
+    public BoxCollider2D crouchCollider2D;
     public Transform playerTransform;
     public Transform playerFeetTransform;
-
-    public Collider2D _footCollider;
-    public Animator anim;
 
     private bool _isGrounded;
     private bool _isJumping;
@@ -58,21 +50,17 @@ public class BasicMovement : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();   
         playerTransform = transform;
+        
     }
-
+  
     private void Update()
     {
         inputHorizontal = Input.GetAxisRaw("Horizontal");
         MovementHandler();
         Debug.Log(MovementParameter.movementState);
     }
-
-    /*  private void OnTriggerEnter2D(Collider2D collision)
-      {
-          _isFalling = false;
-      }*/
 
     /// <summary>
     /// Check if player is grounded
@@ -113,13 +101,17 @@ public class BasicMovement : MonoBehaviour
         {
             MovementParameter.movementState = MovementState.run;
         }
-        if (_isGrounded && Input.GetKey(KeyCode.LeftControl))
+        if (_isGrounded && Input.GetKeyDown(KeyCode.LeftControl))
         {
             MovementParameter.movementState = MovementState.crouch;
         }
         if (!_isGrounded && rb.velocity.y < 0)
         {
             MovementParameter.movementState = MovementState.falling;
+        }
+        if(_isGrounded && Input.GetKey(KeyCode.LeftShift))
+        {
+            MovementParameter.movementState = MovementState.sliding;
         }
         SwitchMovementMechanism();
     }
@@ -146,6 +138,10 @@ public class BasicMovement : MonoBehaviour
                 Falling();
                 break;
 
+            case MovementState.sliding:
+                Sliding();
+                break;
+
             case MovementState.climbing: break;
         }
     }
@@ -167,7 +163,7 @@ public class BasicMovement : MonoBehaviour
             // Set Z-axis rotation to zero to prevent rotation around the Y-axis
             playerTransform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
         }
-        if (horizontalInput > 0 || horizontalInput < 0)
+        if (horizontalInput != 0)
         {
             anim.SetBool("Running", true);
         }
@@ -209,18 +205,27 @@ public class BasicMovement : MonoBehaviour
 
     private void Crouch()
     {
-        _isCrouching = _isGrounded && Input.GetKey(KeyCode.LeftControl);
+        _isCrouching = _isGrounded && Input.GetKeyDown(KeyCode.LeftControl);
 
 
         if (_isCrouching)
         {
             movementMultiplier = crouchSpeed;
+            playerCollider2D.enabled = false;
+            crouchCollider2D.enabled = true;
+
         }
-        if(Input.GetKeyUp(KeyCode.LeftControl)||!_isGrounded)
+        else
         {
-            _isCrouching = false;
+            playerCollider2D.enabled = true;
+            crouchCollider2D.enabled = false;
         }
         anim.SetBool("Crouching", _isCrouching);
+    }
+
+    private void Sliding()
+    {
+
     }
 
     // have to fix the bool problem of when jumping and falling DOES NOT TURN OFF
