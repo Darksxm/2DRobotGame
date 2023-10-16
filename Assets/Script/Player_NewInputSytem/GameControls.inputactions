@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jumping",
+                    "name": "Jump",
                     "type": "Button",
                     "id": "39e0092e-0363-4601-9cf8-b527ab913aee",
                     "expectedControlType": "Button",
@@ -87,7 +87,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Jumping",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

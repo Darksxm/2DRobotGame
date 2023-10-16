@@ -2,21 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerIdleState : PlayerGroundedState
+public class PlayerInAirState : PlayerState
 {
-    public PlayerIdleState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
+    private bool isGrounded;
+    public PlayerInAirState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
     }
 
     public override void DoChecks()
     {
         base.DoChecks();
+        isGrounded = player.CheckIfGrounded();
     }
 
     public override void Enter()
     {
         base.Enter();
-        player.SetVelocityX(0f);
     }
 
     public override void Exit()
@@ -26,11 +27,10 @@ public class PlayerIdleState : PlayerGroundedState
 
     public override void LogicUpdate()
     {
-       
         base.LogicUpdate();
-        if(xInput != 0)
+        if(isGrounded && player.CurrentVelocity.y < 0.01f)
         {
-            stateMachine.ChangeState(player.MoveState);
+            stateMachine.ChangeState(player.LandState);
         }
     }
 
@@ -38,6 +38,4 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.PhysicsUpdate();
     }
-
-    
 }

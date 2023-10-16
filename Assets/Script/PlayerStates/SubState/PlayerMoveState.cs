@@ -16,6 +16,7 @@ public class PlayerMoveState : PlayerGroundedState
     public override void Enter()
     {
         base.Enter();
+    
     }
 
     public override void Exit()
@@ -39,15 +40,5 @@ public class PlayerMoveState : PlayerGroundedState
         base.PhysicsUpdate();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
