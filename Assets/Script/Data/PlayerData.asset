@@ -12,16 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453770efbc474ae45bc788af2936456e, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  movementVelocity: 10
+  movementVelocity: 15
   jumpVelocity: 25
   amountOfJumps: 1
   cayoteTime: 0.2
   variableJumpHeightMultiplier: 0.2
   wallSlideVelocity: 2
-  wallClimbVelocity: 3
-  wallJumpVelocity: 25
+  wallClimbVelocity: 4
+  wallJumpVelocity: 30
   wallJumpTime: 0.4
+  startWallJumpCayoteTime: 8.639999
   wallJumpAngle: {x: 1, y: 3}
+  startOffSet: {x: -0.3, y: 2}
+  stopOffSet: {x: 0, y: 0}
   groundCheckRadius: 0.3
   wallCheckDistance: 1.2
   whatIsGround:

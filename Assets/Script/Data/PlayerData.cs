@@ -20,7 +20,11 @@ public class PlayerData : ScriptableObject
     [Header("WallJump State")]
     public float wallJumpVelocity = 20f;
     public float wallJumpTime = 0.4f;
+    public float startWallJumpCayoteTime = 0.2f;
     public Vector2 wallJumpAngle = new Vector2(1,2);
+    [Header("LedgeClimb State")]
+    public Vector2 startOffSet;
+    public Vector2 stopOffSet;
     [Header("Check Variables")]
     public float groundCheckRadius = 0.3f;
     public float wallCheckDistance = 0.5f;
