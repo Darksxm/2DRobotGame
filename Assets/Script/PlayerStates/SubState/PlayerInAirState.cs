@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInAirState : PlayerState
@@ -9,8 +7,10 @@ public class PlayerInAirState : PlayerState
     private bool jumpInput;
     private bool isJumping;
     private bool jumpInputStop;
-    //checks if there is enought time between the moment we are in air and not grounded 
+
+    //checks if there is enought time between the moment we are in air and not grounded
     private bool cayoteTime;
+
     private bool wallJumpCayoteTime;
     private bool isTouchingWall;
     private bool isTouchingWallBack;
@@ -18,6 +18,7 @@ public class PlayerInAirState : PlayerState
     private bool oldIsTouchingWall;
     private bool oldIsTouchingWallBack;
     private bool isTouchingLedge;
+
     public PlayerInAirState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
     }
@@ -33,16 +34,15 @@ public class PlayerInAirState : PlayerState
         isTouchingWallBack = player.CheckIfTouchingWallBack();
         isTouchingLedge = player.CheckIfTouchingLedge();
 
-        if(isTouchingWall && !isTouchingLedge)
+        if (isTouchingWall && !isTouchingLedge)
         {
             player.LedgeClimbState.SetDetectedPosition(player.transform.position);
         }
         //if we are currently mid air but in the previous frame we touched the wall then we can start the cayote time for the wall jump
-        if(!wallJumpCayoteTime && !isTouchingWallBack && !isTouchingWall && (oldIsTouchingWall|| oldIsTouchingWallBack))
+        if (!wallJumpCayoteTime && !isTouchingWallBack && !isTouchingWall && (oldIsTouchingWall || oldIsTouchingWallBack))
         {
             StartWallJumpCayoteTime();
         }
-        
     }
 
     public override void Enter()
@@ -57,7 +57,6 @@ public class PlayerInAirState : PlayerState
         oldIsTouchingWallBack = false;
         isTouchingWall = false;
         isTouchingWallBack = false;
-
     }
 
     public override void LogicUpdate()
@@ -73,10 +72,10 @@ public class PlayerInAirState : PlayerState
         //switch to landState
         if (isGrounded && player.CurrentVelocity.y < 0.01f)
         {
-            stateMachine.ChangeState(player.LandState);   
+            stateMachine.ChangeState(player.LandState);
         }
         //switch to Climb Ledge
-        else if ( isTouchingWall&&!isTouchingLedge)
+        else if (isTouchingWall && !isTouchingLedge && !isGrounded)
         {
             stateMachine.ChangeState(player.LedgeClimbState);
         }
@@ -89,17 +88,17 @@ public class PlayerInAirState : PlayerState
             stateMachine.ChangeState(player.WallJumpState);
         }
         //switch to JumpState
-        else if(jumpInput && player.JumpState.CanJump())
+        else if (jumpInput && player.JumpState.CanJump())
         {
             stateMachine.ChangeState(player.JumpState);
         }
         //switch to wall grab state
-        else if (isTouchingWall && grabInput)
+        else if (isTouchingWall && grabInput && isTouchingLedge)
         {
             stateMachine.ChangeState(player.WallGrabState);
         }
         //switch to wall slide state
-        else if (isTouchingWall && xInput == player.FacingDirection && player.CurrentVelocity.y <=0)
+        else if (isTouchingWall && xInput == player.FacingDirection && player.CurrentVelocity.y <= 0)
         {
             stateMachine.ChangeState(player.WallSlideState);
         }
@@ -113,6 +112,7 @@ public class PlayerInAirState : PlayerState
             player.Anim.SetFloat("xVelocity", Mathf.Abs(player.CurrentVelocity.x));//MathF to return a positive value in the animator always
         }
     }
+
     /// <summary>
     /// if we keep pressing space we jump heighter
     /// </summary>
@@ -131,23 +131,27 @@ public class PlayerInAirState : PlayerState
             }
         }
     }
+
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
     }
+
     #region Check Funtions
+
     /// <summary>
-    /// checks time-laps when we press the Jump button and the amount of time we are in air so that we still 
+    /// checks time-laps when we press the Jump button and the amount of time we are in air so that we still
     /// have a bit of time before falling and we can jump
     /// </summary>
     private void CheckCayoteTime()
     {
-        if(cayoteTime == true && Time.time > startTime + playerData.cayoteTime)
+        if (cayoteTime == true && Time.time > startTime + playerData.cayoteTime)
         {
             cayoteTime = false;
             player.JumpState.DecreaseAmountOfJumpsLeft();
         }
     }
+
     private void CheckWallJumpCayoteTime()
     {
         if (wallJumpCayoteTime == true && Time.time > startTime + playerData.startWallJumpCayoteTime)
@@ -156,16 +160,21 @@ public class PlayerInAirState : PlayerState
             player.JumpState.DecreaseAmountOfJumpsLeft();
         }
     }
-    #endregion
+
+    #endregion Check Funtions
+
     public void StartCayoteTime() => cayoteTime = true;
+
     public void StartWallJumpCayoteTime()
     {
-        wallJumpCayoteTime = true; 
+        wallJumpCayoteTime = true;
         playerData.startWallJumpCayoteTime = Time.time;
     }
-    public void StopWallJumpCayoteTime() 
-    { 
+
+    public void StopWallJumpCayoteTime()
+    {
         wallJumpCayoteTime = false;
     }
+
     public void SetIsJumping() => isJumping = true;
 }
