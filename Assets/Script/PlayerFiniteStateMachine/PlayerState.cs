@@ -11,6 +11,8 @@ public class PlayerState
     #endregion
 
     protected float startTime;
+    protected bool isAnimationFinished;
+    protected bool isExitingState;
 
     private string animBoolName;
 
@@ -28,10 +30,13 @@ public class PlayerState
         // check the time when it enters a state
         startTime = Time.time;
         Debug.Log(animBoolName);
+        isAnimationFinished = false;
+        isExitingState = false;
     }
     public virtual void Exit()
     {
         player.Anim.SetBool(animBoolName,false);
+        isExitingState = true;
 
     }
     public virtual void LogicUpdate()
@@ -42,8 +47,7 @@ public class PlayerState
     {
         DoChecks();
     }
-    public virtual void DoChecks()
-    {
-
-    }
+    public virtual void DoChecks()  {  }
+    public virtual void AnimationTrigger() { }
+    public virtual void AnimationFinishTrigger() => isAnimationFinished = true;
 }

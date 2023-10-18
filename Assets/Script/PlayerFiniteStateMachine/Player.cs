@@ -11,6 +11,10 @@ public class Player : MonoBehaviour
     public PlayerJumpState JumpState { get; private set; }
     public PlayerInAirState InAirState { get; private set; }
     public PlayerLandState LandState { get; private set; }
+    public PlayerWallClimbState WallClimbState { get; private set; }
+    public PlayerWallGrabState WallGrabState { get; private set; }
+    public PlayerWallSlideState WallSlideState { get; private set; }
+    public PlayerWallJumpState WallJumpState { get; private set; }
 
 
     [SerializeField]
@@ -24,6 +28,8 @@ public class Player : MonoBehaviour
     #region Check Variables
     [SerializeField]
     private Transform groundCheck;
+    [SerializeField]
+    private Transform WallCheck;
     #endregion
     #region Other Variables
     public Vector2 CurrentVelocity { get; private set; }  
@@ -34,7 +40,7 @@ public class Player : MonoBehaviour
 
     #region Unity Callback Functions
     /// <summary>
-    /// Set up all the different states
+    /// Set up all the different states and booleans in the animator
     /// </summary>
     private void Awake()
     {
@@ -44,6 +50,11 @@ public class Player : MonoBehaviour
         JumpState = new PlayerJumpState(this, StateMachine, playerData, "inAir");
         InAirState = new PlayerInAirState(this, StateMachine, playerData, "inAir");
         LandState = new PlayerLandState(this, StateMachine, playerData, "land");
+        WallClimbState = new PlayerWallClimbState(this, StateMachine, playerData, "wallClimb");
+        WallGrabState = new PlayerWallGrabState(this, StateMachine, playerData, "wallGrab");
+        WallSlideState = new PlayerWallSlideState(this, StateMachine, playerData, "wallSlide");
+        WallJumpState = new PlayerWallJumpState(this, StateMachine, playerData, "inAir");
+
     }
     /// <summary>
     /// Gets all the component
@@ -79,6 +90,19 @@ public class Player : MonoBehaviour
 
     #region Set Functions
     /// <summary>
+    /// set velocity at an angle
+    /// </summary>
+    /// <param name="velocity"></param>
+    /// <param name="angle"></param>
+    /// <param name="direction"></param>
+    public void SetVelocity(float velocity, Vector2 angle, int direction)
+    {
+        angle.Normalize();
+        workSpace.Set(angle.x * velocity * direction, angle.y * velocity);
+        Rb.velocity = workSpace;
+        CurrentVelocity = workSpace;
+    }
+    /// <summary>
     /// Set the player Speed on X axis
     /// </summary>
     /// <param name="velocity"></param>
@@ -98,6 +122,7 @@ public class Player : MonoBehaviour
         Rb.velocity = workSpace;
         CurrentVelocity = workSpace;
     }
+
     #endregion
     #region Check Functions
     /// <summary>
@@ -107,6 +132,14 @@ public class Player : MonoBehaviour
     public bool CheckIfGrounded()
     {
         return Physics2D.OverlapCircle(groundCheck.position, playerData.groundCheckRadius, playerData.whatIsGround);
+    }
+    public bool CheckIfTouchingWall()
+    {
+        return Physics2D.Raycast(WallCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+    }
+    public bool CheckIfTouchingWallBack()
+    {
+        return Physics2D.Raycast(WallCheck.position, Vector2.right * -FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
     }
     /// <summary>
     /// Checks if we need to flip the player according to the xInput which is set in PlayerInputHandler.cs
@@ -122,6 +155,8 @@ public class Player : MonoBehaviour
     }
     #endregion
     #region Other Functions
+    private void AnimationTrigger() => StateMachine.CurrentState.AnimationTrigger();
+    private void AnimationFinishTrigger() => StateMachine.CurrentState.AnimationFinishTrigger();
     /// <summary>
     /// Flips our player
     /// </summary>
