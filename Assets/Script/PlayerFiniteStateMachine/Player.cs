@@ -115,6 +115,17 @@ public class Player : MonoBehaviour
         CurrentVelocity = workSpace;
     }
     /// <summary>
+    /// function used in dashstate
+    /// </summary>
+    /// <param name="velocity"></param>
+    /// <param name="direction"></param>
+    public void SetVelocity(float velocity, Vector2 direction)
+    {
+        workSpace = direction * velocity;
+        Rb.velocity = workSpace;
+        CurrentVelocity = workSpace;
+    }
+    /// <summary>
     /// Set the player Speed on X axis
     /// </summary>
     /// <param name="velocity"></param>

@@ -7,6 +7,7 @@ public class PlayerInputHandler : MonoBehaviour
     private Camera cam;
     public Vector2 RawMovementInput { get; private set; }
     public Vector2 RawDashDirectionInput { get; private set; }
+    public Vector2Int DashDirectionInput { get; private set; }
     public int NormalizedInputX { get; private set; }
     public int NormalizedInputY { get; private set; }
     public bool JumpInput { get; private set; }
@@ -104,8 +105,11 @@ public class PlayerInputHandler : MonoBehaviour
         RawDashDirectionInput = context.ReadValue<Vector2>();
         if (playerInput.currentControlScheme == "Keyboard")
         {
-            RawDashDirectionInput = cam.ScreenToWorldPoint((Vector3)(RawDashDirectionInput) - transform.position);
+            RawDashDirectionInput = cam.ScreenToWorldPoint((Vector3)RawDashDirectionInput) - transform.position;
+
         }
+        DashDirectionInput = Vector2Int.RoundToInt(RawDashDirectionInput.normalized);
+        
     }
     
     #endregion

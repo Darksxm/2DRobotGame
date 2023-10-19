@@ -90,7 +90,7 @@ public class PlayerInAirState : PlayerState
             stateMachine.ChangeState(player.LedgeClimbState);
         }
         //switch to wall jump
-        else if (jumpInput && (isTouchingWall || isTouchingWallBack || wallJumpCayoteTime))
+        else if (jumpInput && !isJumping && (isTouchingWall || isTouchingWallBack || wallJumpCayoteTime))
         {
             StopWallJumpCayoteTime();
             isTouchingWall = player.CheckIfTouchingWall();
@@ -182,12 +182,13 @@ public class PlayerInAirState : PlayerState
     public void StartWallJumpCayoteTime()
     {
         wallJumpCayoteTime = true;
-        playerData.startWallJumpCayoteTime = Time.time;
+     /*   playerData.startWallJumpCayoteTime = Time.time;*/
     }
 
     public void StopWallJumpCayoteTime()
     {
         wallJumpCayoteTime = false;
+       
     }
 
     public void SetIsJumping() => isJumping = true;
