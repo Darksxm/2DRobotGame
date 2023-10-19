@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     public PlayerWallSlideState WallSlideState { get; private set; }
     public PlayerWallJumpState WallJumpState { get; private set; }
     public PlayerLedgeClimbState LedgeClimbState { get; private set; }
+    public PlayerDashState DashState { get; private set; }
 
 
     [SerializeField]
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
     public Animator Anim { get; private set; }
     public PlayerInputHandler inputHandler { get; private set; }
     public Rigidbody2D Rb { get; private set; }
+    public Transform DashDirectionIndicator { get; private set; }
     #endregion
     #region Check Transforms
     [SerializeField]
@@ -57,6 +59,7 @@ public class Player : MonoBehaviour
         WallSlideState = new PlayerWallSlideState(this, StateMachine, playerData, "wallSlide");
         WallJumpState = new PlayerWallJumpState(this, StateMachine, playerData, "inAir");
         LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, playerData, "ledgeClimbState");
+        DashState = new PlayerDashState(this, StateMachine, playerData, "dash");
 
     }
     /// <summary>
@@ -69,6 +72,8 @@ public class Player : MonoBehaviour
         Anim = GetComponent<Animator>();
         inputHandler = GetComponent<PlayerInputHandler>();
         Rb = GetComponent<Rigidbody2D>();
+        DashDirectionIndicator = transform.Find("DashDirectionIndicator");
+
         FacingDirection = 1;
         StateMachine.Initialize(IdleState);
     }

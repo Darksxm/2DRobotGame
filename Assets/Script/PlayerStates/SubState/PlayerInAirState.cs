@@ -2,22 +2,26 @@ using UnityEngine;
 
 public class PlayerInAirState : PlayerState
 {
+    //Input 
     private int xInput;
-    private bool isGrounded;
     private bool jumpInput;
-    private bool isJumping;
     private bool jumpInputStop;
+    private bool grabInput;
+    private bool dashInput;
 
-    //checks if there is enought time between the moment we are in air and not grounded
-    private bool cayoteTime;
-
-    private bool wallJumpCayoteTime;
+    //Checks
+    private bool isGrounded;
     private bool isTouchingWall;
     private bool isTouchingWallBack;
-    private bool grabInput;
     private bool oldIsTouchingWall;
     private bool oldIsTouchingWallBack;
     private bool isTouchingLedge;
+
+    //Others
+    //checks if there is enought time between the moment we are in air and not grounded
+    private bool cayoteTime;
+    private bool wallJumpCayoteTime;
+    private bool isJumping;
 
     public PlayerInAirState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
@@ -26,6 +30,7 @@ public class PlayerInAirState : PlayerState
     public override void DoChecks()
     {
         base.DoChecks();
+
         oldIsTouchingWall = isTouchingWall;
         oldIsTouchingWallBack = isTouchingWallBack;
 
@@ -33,6 +38,7 @@ public class PlayerInAirState : PlayerState
         isTouchingWall = player.CheckIfTouchingWall();
         isTouchingWallBack = player.CheckIfTouchingWallBack();
         isTouchingLedge = player.CheckIfTouchingLedge();
+       
 
         if (isTouchingWall && !isTouchingLedge)
         {
@@ -62,12 +68,16 @@ public class PlayerInAirState : PlayerState
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+
         CheckCayoteTime();
         CheckWallJumpCayoteTime();
+
         xInput = player.inputHandler.NormalizedInputX;
         jumpInput = player.inputHandler.JumpInput;
         jumpInputStop = player.inputHandler.JumpInputStop;
         grabInput = player.inputHandler.GrabInput;
+        dashInput = player.inputHandler.DashInput;
+
         CheckJumpMultiplier();
         //switch to landState
         if (isGrounded && player.CurrentVelocity.y < 0.01f)
@@ -101,6 +111,10 @@ public class PlayerInAirState : PlayerState
         else if (isTouchingWall && xInput == player.FacingDirection && player.CurrentVelocity.y <= 0)
         {
             stateMachine.ChangeState(player.WallSlideState);
+        }
+        else if (dashInput && player.DashState.CheckIfCanDash())
+        {
+            stateMachine.ChangeState(player.DashState);
         }
         else
         {
@@ -137,7 +151,7 @@ public class PlayerInAirState : PlayerState
         base.PhysicsUpdate();
     }
 
-    #region Check Funtions
+    #region Check Functions
 
     /// <summary>
     /// checks time-laps when we press the Jump button and the amount of time we are in air so that we still

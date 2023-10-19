@@ -53,6 +53,24 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""a9bfb92c-1956-4524-bc14-fa7453138e89"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DashDirection"",
+                    ""type"": ""Value"",
+                    ""id"": ""53eaa74a-cafc-4371-be4b-d9a25ccc1e79"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -132,6 +150,28 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                     ""action"": ""Grab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77101885-f3c7-430e-8a0e-7e67b6baf4d0"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1f644a2d-95b3-4942-860f-b9c6f8f85927"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""DashDirection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -160,6 +200,8 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
         m_Gameplay_Moving = m_Gameplay.FindAction("Moving", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Grab = m_Gameplay.FindAction("Grab", throwIfNotFound: true);
+        m_Gameplay_Dash = m_Gameplay.FindAction("Dash", throwIfNotFound: true);
+        m_Gameplay_DashDirection = m_Gameplay.FindAction("DashDirection", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -222,6 +264,8 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Moving;
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_Grab;
+    private readonly InputAction m_Gameplay_Dash;
+    private readonly InputAction m_Gameplay_DashDirection;
     public struct GameplayActions
     {
         private @GameControls m_Wrapper;
@@ -229,6 +273,8 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
         public InputAction @Moving => m_Wrapper.m_Gameplay_Moving;
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @Grab => m_Wrapper.m_Gameplay_Grab;
+        public InputAction @Dash => m_Wrapper.m_Gameplay_Dash;
+        public InputAction @DashDirection => m_Wrapper.m_Gameplay_DashDirection;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -247,6 +293,12 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                 @Grab.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnGrab;
                 @Grab.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnGrab;
                 @Grab.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnGrab;
+                @Dash.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
+                @DashDirection.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDashDirection;
+                @DashDirection.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDashDirection;
+                @DashDirection.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDashDirection;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -260,6 +312,12 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                 @Grab.started += instance.OnGrab;
                 @Grab.performed += instance.OnGrab;
                 @Grab.canceled += instance.OnGrab;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
+                @DashDirection.started += instance.OnDashDirection;
+                @DashDirection.performed += instance.OnDashDirection;
+                @DashDirection.canceled += instance.OnDashDirection;
             }
         }
     }
@@ -278,5 +336,7 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
         void OnMoving(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnGrab(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
+        void OnDashDirection(InputAction.CallbackContext context);
     }
 }
