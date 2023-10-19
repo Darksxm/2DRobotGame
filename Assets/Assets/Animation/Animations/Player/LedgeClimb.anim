@@ -20,14 +20,11 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: -6690693090405489421, guid: a2b813fdc1de4474796e2808b544f8f9,
-        type: 3}
+      value: {fileID: -6690693090405489421, guid: a2b813fdc1de4474796e2808b544f8f9, type: 3}
     - time: 0.1
-      value: {fileID: 4340307602009781571, guid: a2b813fdc1de4474796e2808b544f8f9,
-        type: 3}
+      value: {fileID: 4340307602009781571, guid: a2b813fdc1de4474796e2808b544f8f9, type: 3}
     - time: 0.2
-      value: {fileID: -131500372201574662, guid: a2b813fdc1de4474796e2808b544f8f9,
-        type: 3}
+      value: {fileID: -131500372201574662, guid: a2b813fdc1de4474796e2808b544f8f9, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -76,7 +73,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.3
-    functionName: AnimtionFinishTrigger
+    functionName: AnimationFinishTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
