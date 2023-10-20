@@ -6,6 +6,8 @@ public class PlayerAfterImagePool : MonoBehaviour
 {
     [SerializeField]
     private GameObject afterImagePrefabs;
+    [SerializeField]
+    private int amountOfAfterImages = 10;
     
     private Queue<GameObject> availableObjects = new Queue<GameObject>();
     public static PlayerAfterImagePool Instance { get; private set; }
@@ -16,7 +18,7 @@ public class PlayerAfterImagePool : MonoBehaviour
     }
     private void GrowPool()
     {
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < amountOfAfterImages; i++)
         {
             var instanceToAdd = Instantiate(afterImagePrefabs);
             instanceToAdd.transform.SetParent(transform);
