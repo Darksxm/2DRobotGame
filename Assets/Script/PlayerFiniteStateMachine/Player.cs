@@ -76,6 +76,7 @@ public class Player : MonoBehaviour
 
         FacingDirection = 1;
         StateMachine.Initialize(IdleState);
+        SetGravityScale(playerData.gravityScale);
     }
     /// <summary>
     /// Update the current player velocity
@@ -145,6 +146,10 @@ public class Player : MonoBehaviour
         Rb.velocity = workSpace;
         CurrentVelocity = workSpace;
     }
+    public void SetGravityScale(float scale)
+    {
+        Rb.gravityScale = scale;
+    }
 
     #endregion
     #region Check Functions
@@ -180,7 +185,49 @@ public class Player : MonoBehaviour
             Flip();
         }
     }
+
     #endregion
+    #region Gravity
+//to do : figure out where to put it all
+    public void CheckGravity()
+    {
+        //Higher gravity if we've released the jump input or are falling
+        if (CheckIfTouchingWall()||CheckIfTouchingWallBack())
+        {
+            SetGravityScale(0);
+        }
+        else if (CurrentVelocity.y < 0 && inputHandler.NormalizedInputY < 0)
+        {
+            //Much higher gravity if holding down
+            SetGravityScale(playerData.gravityScale * playerData.fastFallGravityMult);
+            //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
+            CurrentVelocity = new Vector2(CurrentVelocity.x, Mathf.Max(CurrentVelocity.y, -playerData.maxFastFallSpeed));
+        }
+        else if (inputHandler.JumpInputStop)
+        {
+            //Higher gravity if jump button released
+            SetGravityScale(playerData.gravityScale * playerData.jumpCutGravityMult);
+            CurrentVelocity = new Vector2(CurrentVelocity.x, Mathf.Max(CurrentVelocity.y, -playerData.maxFallSpeed));
+        }
+        else if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(CurrentVelocity.y) < playerData.jumpHangTimeThreshold)
+        {
+            SetGravityScale(playerData.gravityScale * playerData.jumpHangGravityMult);
+        }
+        else if (CurrentVelocity.y < 0)
+        {
+            //Higher gravity if falling
+            SetGravityScale(playerData.gravityScale * playerData.fallGravityMult);
+            //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
+            CurrentVelocity = new Vector2(CurrentVelocity.x, Mathf.Max(CurrentVelocity.y, -playerData.maxFallSpeed));
+        }
+        else
+        {
+            //Default gravity if standing on a platform or moving upwards  or wall grab state
+            SetGravityScale(playerData.gravityScale);
+        }
+    }
+    #endregion
+
     #region Other Functions
     /// <summary>
     /// Determine the distance between the player and the ledge
