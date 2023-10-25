@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
     public PlayerWallJumpState WallJumpState { get; private set; }
     public PlayerLedgeClimbState LedgeClimbState { get; private set; }
     public PlayerDashState DashState { get; private set; }
+    public PlayerCrouchIdleState CrouchIdleState { get; private set; }
+    public PlayerCrouchMoveState CrouchMoveState { get; private set; }
 
 
     [SerializeField]
@@ -27,6 +29,7 @@ public class Player : MonoBehaviour
     public PlayerInputHandler inputHandler { get; private set; }
     public Rigidbody2D Rb { get; private set; }
     public Transform DashDirectionIndicator { get; private set; }
+    public BoxCollider2D MovementCollider { get; private set; }
     #endregion
     #region Check Transforms
     [SerializeField]
@@ -60,6 +63,8 @@ public class Player : MonoBehaviour
         WallJumpState = new PlayerWallJumpState(this, StateMachine, playerData, "inAir");
         LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, playerData, "ledgeClimbState");
         DashState = new PlayerDashState(this, StateMachine, playerData, "dash");
+        CrouchIdleState = new PlayerCrouchIdleState(this, StateMachine, playerData, "crouchIdle");
+        CrouchMoveState = new PlayerCrouchMoveState(this, StateMachine, playerData, "crouchMove");
 
     }
     /// <summary>
@@ -72,6 +77,7 @@ public class Player : MonoBehaviour
         Anim = GetComponent<Animator>();
         inputHandler = GetComponent<PlayerInputHandler>();
         Rb = GetComponent<Rigidbody2D>();
+        MovementCollider = GetComponent<BoxCollider2D>();
         DashDirectionIndicator = transform.Find("DashDirectionIndicator");
 
         FacingDirection = 1;
@@ -188,11 +194,10 @@ public class Player : MonoBehaviour
 
     #endregion
     #region Gravity
-//to do : figure out where to put it all
     public void CheckGravity()
     {
         //Higher gravity if we've released the jump input or are falling
-        if (CheckIfTouchingWall()||CheckIfTouchingWallBack())
+        if (WallSlideState.isSliding || LedgeClimbState.isHanging)
         {
             SetGravityScale(0);
         }
@@ -203,20 +208,20 @@ public class Player : MonoBehaviour
             //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
             CurrentVelocity = new Vector2(CurrentVelocity.x, Mathf.Max(CurrentVelocity.y, -playerData.maxFastFallSpeed));
         }
-        else if (inputHandler.JumpInputStop)
+        else if (InAirState.isJumping && CurrentVelocity.y > 0)
         {
             //Higher gravity if jump button released
             SetGravityScale(playerData.gravityScale * playerData.jumpCutGravityMult);
             CurrentVelocity = new Vector2(CurrentVelocity.x, Mathf.Max(CurrentVelocity.y, -playerData.maxFallSpeed));
         }
-        else if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(CurrentVelocity.y) < playerData.jumpHangTimeThreshold)
+        else if ((InAirState.isJumping || WallJumpState.isWallJumping || CurrentVelocity.y < 0) && Mathf.Abs(CurrentVelocity.y) < playerData.jumpHangTimeThreshold)
         {
-            SetGravityScale(playerData.gravityScale * playerData.jumpHangGravityMult);
+                SetGravityScale(playerData.gravityScale * playerData.jumpHangGravityMult);
         }
         else if (CurrentVelocity.y < 0)
         {
             //Higher gravity if falling
-            SetGravityScale(playerData.gravityScale * playerData.fallGravityMult);
+             SetGravityScale(playerData.gravityScale * playerData.fallGravityMult);
             //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
             CurrentVelocity = new Vector2(CurrentVelocity.x, Mathf.Max(CurrentVelocity.y, -playerData.maxFallSpeed));
         }
@@ -227,8 +232,18 @@ public class Player : MonoBehaviour
         }
     }
     #endregion
-
     #region Other Functions
+    // to do : addd feature to manage offset on x axis
+    public void SetColliderHeight(float height)
+    {
+        Vector2 center = MovementCollider.offset;
+        workSpace.Set(MovementCollider.size.x, height);
+
+        center.y += (height - MovementCollider.size.y) / 2;
+
+        MovementCollider.size = workSpace;
+        MovementCollider.offset = center;
+    }
     /// <summary>
     /// Determine the distance between the player and the ledge
     /// </summary>
@@ -237,8 +252,8 @@ public class Player : MonoBehaviour
     {
         RaycastHit2D xHit = Physics2D.Raycast(WallCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
         float xDistance = xHit.distance;
-        workSpace.Set(xDistance * FacingDirection, 0f);
-        RaycastHit2D yHit = Physics2D.Raycast(ledgeCheck.position + (Vector3)(workSpace), Vector2.down, ledgeCheck.position.y - WallCheck.position.y, playerData.whatIsGround);
+        workSpace.Set((xDistance + 0.015f) * FacingDirection, 0f);
+        RaycastHit2D yHit = Physics2D.Raycast(ledgeCheck.position + (Vector3)(workSpace), Vector2.down, ledgeCheck.position.y - WallCheck.position.y + 0.015f, playerData.whatIsGround);
         float yDistance = yHit.distance;
         workSpace.Set(WallCheck.position.x + (xDistance * FacingDirection), ledgeCheck.position.y - yDistance);
         return workSpace;

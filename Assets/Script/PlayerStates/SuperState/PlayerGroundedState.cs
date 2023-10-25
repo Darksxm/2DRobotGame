@@ -6,6 +6,7 @@ public class PlayerGroundedState : PlayerState
     private bool isTouchingLedge;
     //Inputs
     protected int xInput;
+    protected int yInput;
     private bool jumpInput;
     private bool grabInput;
     private bool dashInput;
@@ -41,6 +42,7 @@ public class PlayerGroundedState : PlayerState
         base.LogicUpdate();
 
         xInput = player.inputHandler.NormalizedInputX;
+        yInput = player.inputHandler.NormalizedInputY;
         jumpInput = player.inputHandler.JumpInput;
         grabInput = player.inputHandler.GrabInput;
         dashInput = player.inputHandler.DashInput;
