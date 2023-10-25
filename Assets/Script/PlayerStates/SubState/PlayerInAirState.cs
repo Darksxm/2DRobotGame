@@ -21,7 +21,7 @@ public class PlayerInAirState : PlayerState
     //checks if there is enought time between the moment we are in air and not grounded
     private bool cayoteTime;
     private bool wallJumpCayoteTime;
-    private bool isJumping;
+    public bool isJumping;
 
     public PlayerInAirState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {

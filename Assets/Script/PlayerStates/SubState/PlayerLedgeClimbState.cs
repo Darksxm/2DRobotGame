@@ -6,11 +6,11 @@ public class PlayerLedgeClimbState : PlayerState
     private Vector2 cornerPosition;
     private Vector2 startPosition;
     private Vector2 stopPosition;
-    private bool isHanging;
     private bool isClimbing;
     private bool jumpInput;
     private int xInput;
     private int yInput;
+    public bool isHanging;
 
     public PlayerLedgeClimbState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {

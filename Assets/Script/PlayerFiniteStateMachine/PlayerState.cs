@@ -46,6 +46,7 @@ public class PlayerState
     public virtual void PhysicsUpdate()
     {
         DoChecks();
+        player.CheckGravity();
     }
     public virtual void DoChecks()  {  }
     public virtual void AnimationTrigger() { }

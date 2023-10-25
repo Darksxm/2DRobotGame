@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class PlayerWallSlideState : PlayerTouchingWallState
 {
+    public bool isSliding;
     public PlayerWallSlideState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
 
     }
-
+    public override void Enter()
+    {
+        base.Enter();
+        isSliding = true;
+    } public override void Exit()
+    {
+        base.Exit();
+        isSliding = false;
+    }
     public override void LogicUpdate()
     {
         base.LogicUpdate();

@@ -12,17 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453770efbc474ae45bc788af2936456e, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
+  gravityScale: 3.537207
+  gravityStrength: -34.7
+  fallGravityMult: 1.61
+  maxFallSpeed: 13.7
+  fastFallGravityMult: 4
+  maxFastFallSpeed: 10
   movementVelocity: 15
-  jumpVelocity: 20
+  jumpVelocity: 34.7
   amountOfJumps: 1
+  jumpHeight: 17.35
+  jumpTimeToApex: 1
+  jumpCutGravityMult: 2.44
+  jumpHangGravityMult: 1
+  jumpHangTimeThreshold: 2
   cayoteTime: 0.2
   variableJumpHeightMultiplier: 0.2
-  wallSlideVelocity: 2
-  wallClimbVelocity: 4
-  wallJumpVelocity: 25
-  wallJumpTime: 0.2
-  startWallJumpCayoteTime: 0.2
-  wallJumpAngle: {x: 1, y: 3}
+  wallSlideVelocity: 5
+  wallClimbVelocity: 15
+  wallJumpVelocity: 20.820002
+  wallJumpTimeToApex: 0.6
+  wallJumpTime: 0.1
+  startWallJumpCayoteTime: 0.05
+  wallJumpAngle: {x: 1, y: 2}
   startOffSet: {x: 0.3, y: 2}
   stopOffSet: {x: 0.5, y: 1}
   dashCoolDown: 0.5
@@ -33,6 +45,9 @@ MonoBehaviour:
   drag: 10
   dashEndYMultiplier: 0.5
   distanceBetweenAfterImages: 0.7
+  crouchMoveVelocity: 5
+  crouchColliderHeight: 2
+  standColliderHeight: 3.26
   groundCheckRadius: 0.3
   wallCheckDistance: 1.2
   whatIsGround:
