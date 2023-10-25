@@ -8,6 +8,7 @@ public class PlayerLedgeClimbState : PlayerState
     private Vector2 stopPosition;
     private bool isClimbing;
     private bool jumpInput;
+    private bool isTouchingCeiling;
     private int xInput;
     private int yInput;
     public bool isHanging;
@@ -58,7 +59,7 @@ public class PlayerLedgeClimbState : PlayerState
             player.transform.position = stopPosition;
             isClimbing = false;
         }
-        
+
     }
 
     public override void LogicUpdate()
@@ -68,7 +69,14 @@ public class PlayerLedgeClimbState : PlayerState
         {
             if (isAnimationFinished)
             {
-                stateMachine.ChangeState(player.IdleState);
+                if (isTouchingCeiling)
+                {
+                    stateMachine.ChangeState(player.CrouchIdleState);
+                }
+                else
+                {
+                    stateMachine.ChangeState(player.IdleState);
+                }
             }
             else
             {
@@ -80,10 +88,11 @@ public class PlayerLedgeClimbState : PlayerState
 
                 if (yInput > 0 && isHanging && !isClimbing)
                 {
+                    CheckForSpace();
                     isClimbing = true;
                     player.Anim.SetBool("climbLedge", true);
                 }
-               
+
                 else if (yInput == -1 && isHanging && !isClimbing)
                 {
                     stateMachine.ChangeState(player.InAirState);
@@ -95,9 +104,15 @@ public class PlayerLedgeClimbState : PlayerState
                     stateMachine.ChangeState(player.WallJumpState);
                 }
             }
-        } 
+        }
 
     }
 
     public void SetDetectedPosition(Vector2 position) => detectedPosition = position;
+    private void CheckForSpace()
+    {
+        isTouchingCeiling = Physics2D.Raycast(cornerPosition + (Vector2.up * 0.015f) + (Vector2.right * player.FacingDirection * 0.015f),
+                                               Vector2.up, playerData.standColliderHeight, playerData.whatIsGround);
+        player.Anim.SetBool("isTouchingCeiling", isTouchingCeiling);
+    }
 }

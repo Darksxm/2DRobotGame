@@ -101,6 +101,7 @@ public class PlayerData : ScriptableObject
     [Header("Check Variables")]
     public float groundCheckRadius = 0.3f;
     public float wallCheckDistance = 0.5f;
+    public float ceilingCheckRadius = 0.5f;
     public LayerMask whatIsGround;
     #endregion
     private void OnValidate()

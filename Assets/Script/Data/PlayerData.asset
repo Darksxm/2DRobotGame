@@ -49,7 +49,8 @@ MonoBehaviour:
   crouchColliderHeight: 2
   standColliderHeight: 3.26
   groundCheckRadius: 0.3
-  wallCheckDistance: 1.2
+  wallCheckDistance: 1.32
+  ceilingCheckRadius: 1.1
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64

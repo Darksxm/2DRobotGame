@@ -37,13 +37,21 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform WallCheck; 
     [SerializeField]
-    private Transform ledgeCheck;
+    private Transform ledgeCheck;   
+    [SerializeField]
+    private Transform ceilingCheck;
     #endregion
     #region Other Variables
     public Vector2 CurrentVelocity { get; private set; }  
     public int FacingDirection { get; private set; }    
 
     private Vector2 workSpace;
+    #endregion
+    #region Draw Gizmos Booleans
+    private bool isTouchingCeiling;
+    private bool isGrounded;
+    private bool isTouchingWall;
+    private bool isTouchingWallBack;
     #endregion
     #region Unity Callback Functions
     /// <summary>
@@ -159,25 +167,29 @@ public class Player : MonoBehaviour
 
     #endregion
     #region Check Functions
-    /// <summary>
-    /// Created a Sphere under the players feet to check if is grounded
-    /// Takes a transform from this script, and a float and layer from PlayerDatacs// </summary>
-    /// <returns></returns>
+    public bool CheckForCeiling()
+    {
+        isTouchingCeiling= Physics2D.OverlapCircle(ceilingCheck.position, playerData.ceilingCheckRadius, playerData.whatIsGround);
+        return isTouchingCeiling;
+    }
     public bool CheckIfGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, playerData.groundCheckRadius, playerData.whatIsGround);
+        isGrounded= Physics2D.OverlapCircle(groundCheck.position, playerData.groundCheckRadius, playerData.whatIsGround);
+        return isGrounded;
     }
     public bool CheckIfTouchingWall()
     {
-        return Physics2D.Raycast(WallCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+        isTouchingWall= Physics2D.Raycast(WallCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+        return isTouchingWall;
     }
     public bool CheckIfTouchingLedge()
     {
-        return Physics2D.Raycast(ledgeCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+        return Physics2D.Raycast(ledgeCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);        
     }
     public bool CheckIfTouchingWallBack()
     {
-        return Physics2D.Raycast(WallCheck.position, Vector2.right * -FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+        isTouchingWallBack = Physics2D.Raycast(WallCheck.position, Vector2.right * -FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+        return isTouchingWallBack;
     }
     /// <summary>
     /// Checks if we need to flip the player according to the xInput which is set in PlayerInputHandler.cs
@@ -270,5 +282,28 @@ public class Player : MonoBehaviour
         transform.Rotate(0f, 180f, 0f);
     }
 
+    #endregion
+    #region Unity Editor
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        
+        Gizmos.color = isTouchingCeiling ? Color.red : Color.green;
+        Gizmos.DrawWireSphere(ceilingCheck.position, playerData.ceilingCheckRadius);
+
+        Gizmos.color = isGrounded ? Color.red : Color.green;
+        Gizmos.DrawWireSphere(groundCheck.position, playerData.groundCheckRadius);
+
+        Gizmos.color = isTouchingWall ? Color.blue : Color.black;
+        Gizmos.DrawRay(WallCheck.position, Vector2.right * FacingDirection * playerData.wallCheckDistance);
+
+        Gizmos.color = isTouchingWallBack ? Color.blue : Color.black;
+        Gizmos.DrawRay(WallCheck.position, Vector2.right * -FacingDirection * playerData.wallCheckDistance);
+
+
+
+
+    }
+#endif
     #endregion
 }
