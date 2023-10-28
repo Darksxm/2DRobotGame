@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,6 +16,7 @@ public class PlayerInputHandler : MonoBehaviour
     public bool GrabInput { get; private set; }
     public bool DashInput { get; private set; }
     public bool DashInputStop { get; private set; }
+    public bool[] AttackInputs { get; private set; }
 
     [SerializeField]
     private float inputHoldTime = 0.2f;
@@ -26,6 +28,8 @@ public class PlayerInputHandler : MonoBehaviour
     private void Start()
     {
         playerInput = GetComponent<PlayerInput>();
+        int count = Enum.GetValues(typeof(CombatInputs)).Length;
+        AttackInputs = new bool[count]; 
         cam = Camera.main;
     }
     private void Update()
@@ -35,7 +39,29 @@ public class PlayerInputHandler : MonoBehaviour
     }
     #endregion
     #region Input Functions
+    public void PrimaryAttackInput (InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            AttackInputs[(int)(CombatInputs.primary)] = true;
+        }
+        if (context.canceled)
+        {
+            AttackInputs[(int)(CombatInputs.primary)] = false;
+        }
+    }
+    public void SecondaryAttackInput (InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            AttackInputs[(int)(CombatInputs.secondary)] = true;
+        }
+        if (context.canceled)
+        {
+            AttackInputs[(int)(CombatInputs.secondary)] = false;
+        }
 
+    }
     /// <summary>
     /// Horizontal Movement converting the Raw Input into normalized Int value to use
     /// in the PlayerGroundState.cs/LogicUpdate() to define xInput. It can later on be used
@@ -134,4 +160,9 @@ public class PlayerInputHandler : MonoBehaviour
     }
 
     #endregion
+    public enum CombatInputs
+    {
+        primary,
+        secondary
+    }
 }

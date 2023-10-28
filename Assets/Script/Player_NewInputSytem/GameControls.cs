@@ -71,6 +71,24 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""PrimaryAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""2b45e742-bc10-4490-9530-aa3cfe38b14e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SecondaryAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""24b89dbc-77a3-43b3-b087-102816de6215"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +190,28 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                     ""action"": ""DashDirection"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""84afbf51-a46c-4211-a29e-1bf184fc7f32"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""PrimaryAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c8a017b3-01a1-4ee2-a854-c37c3e7dfb78"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""SecondaryAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -202,6 +242,8 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
         m_Gameplay_Grab = m_Gameplay.FindAction("Grab", throwIfNotFound: true);
         m_Gameplay_Dash = m_Gameplay.FindAction("Dash", throwIfNotFound: true);
         m_Gameplay_DashDirection = m_Gameplay.FindAction("DashDirection", throwIfNotFound: true);
+        m_Gameplay_PrimaryAttack = m_Gameplay.FindAction("PrimaryAttack", throwIfNotFound: true);
+        m_Gameplay_SecondaryAttack = m_Gameplay.FindAction("SecondaryAttack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -266,6 +308,8 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Grab;
     private readonly InputAction m_Gameplay_Dash;
     private readonly InputAction m_Gameplay_DashDirection;
+    private readonly InputAction m_Gameplay_PrimaryAttack;
+    private readonly InputAction m_Gameplay_SecondaryAttack;
     public struct GameplayActions
     {
         private @GameControls m_Wrapper;
@@ -275,6 +319,8 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
         public InputAction @Grab => m_Wrapper.m_Gameplay_Grab;
         public InputAction @Dash => m_Wrapper.m_Gameplay_Dash;
         public InputAction @DashDirection => m_Wrapper.m_Gameplay_DashDirection;
+        public InputAction @PrimaryAttack => m_Wrapper.m_Gameplay_PrimaryAttack;
+        public InputAction @SecondaryAttack => m_Wrapper.m_Gameplay_SecondaryAttack;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -299,6 +345,12 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                 @DashDirection.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDashDirection;
                 @DashDirection.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDashDirection;
                 @DashDirection.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDashDirection;
+                @PrimaryAttack.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPrimaryAttack;
+                @PrimaryAttack.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPrimaryAttack;
+                @PrimaryAttack.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPrimaryAttack;
+                @SecondaryAttack.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSecondaryAttack;
+                @SecondaryAttack.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSecondaryAttack;
+                @SecondaryAttack.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSecondaryAttack;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -318,6 +370,12 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
                 @DashDirection.started += instance.OnDashDirection;
                 @DashDirection.performed += instance.OnDashDirection;
                 @DashDirection.canceled += instance.OnDashDirection;
+                @PrimaryAttack.started += instance.OnPrimaryAttack;
+                @PrimaryAttack.performed += instance.OnPrimaryAttack;
+                @PrimaryAttack.canceled += instance.OnPrimaryAttack;
+                @SecondaryAttack.started += instance.OnSecondaryAttack;
+                @SecondaryAttack.performed += instance.OnSecondaryAttack;
+                @SecondaryAttack.canceled += instance.OnSecondaryAttack;
             }
         }
     }
@@ -338,5 +396,7 @@ public partial class @GameControls : IInputActionCollection2, IDisposable
         void OnGrab(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnDashDirection(InputAction.CallbackContext context);
+        void OnPrimaryAttack(InputAction.CallbackContext context);
+        void OnSecondaryAttack(InputAction.CallbackContext context);
     }
 }
