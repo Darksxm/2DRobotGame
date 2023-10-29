@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
     public Rigidbody2D Rb { get; private set; }
     public Transform DashDirectionIndicator { get; private set; }
     public BoxCollider2D MovementCollider { get; private set; }
+    public PlayerInventory Inventory { get; private set; }
     #endregion
     #region Check Transforms
     [SerializeField]
@@ -89,11 +90,15 @@ public class Player : MonoBehaviour
         Anim = GetComponent<Animator>();
         inputHandler = GetComponent<PlayerInputHandler>();
         Rb = GetComponent<Rigidbody2D>();
-        MovementCollider = GetComponent<BoxCollider2D>();
         DashDirectionIndicator = transform.Find("DashDirectionIndicator");
+        MovementCollider = GetComponent<BoxCollider2D>();
+        Inventory = GetComponent<PlayerInventory>();
 
         FacingDirection = 1;
-        StateMachine.Initialize(IdleState);
+
+        PrimaryAttackState.SetWeapon(Inventory.weapons[(int)CombatInputs.primary]);
+/*        SecondaryAttackState.SetWeapon(Inventory.weapons[(int)CombatInputs.primary]);
+*/        StateMachine.Initialize(IdleState);
         SetGravityScale(playerData.gravityScale);
     }
     /// <summary>

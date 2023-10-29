@@ -79,8 +79,17 @@ public class PlayerInAirState : PlayerState
         dashInput = player.inputHandler.DashInput;
 
         CheckJumpMultiplier();
+
+        if (player.inputHandler.AttackInputs[(int)CombatInputs.primary])
+        {
+            stateMachine.ChangeState(player.PrimaryAttackState);
+        }
+        else if (player.inputHandler.AttackInputs[(int)CombatInputs.secondary])
+        {
+            stateMachine.ChangeState(player.SecondaryAttackState);
+        }
         //switch to landState
-        if (isGrounded && player.CurrentVelocity.y < 0.01f)
+       else if (isGrounded && player.CurrentVelocity.y < 0.01f)
         {
             stateMachine.ChangeState(player.LandState);
         }
