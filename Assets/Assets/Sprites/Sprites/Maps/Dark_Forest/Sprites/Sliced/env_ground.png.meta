@@ -2003,7 +2003,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 8
+  spritePixelsToUnits: 15
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -2025,7 +2025,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -15807,8 +15807,8 @@ TextureImporter:
       env_ground_441: 21300882
       env_ground_529: 21301058
       env_ground_545: 21301090
-      env_ground_251: 21300502
       env_ground_125: 21300250
+      env_ground_251: 21300502
       env_ground_307: 21300614
       env_ground_511: 21301022
       env_ground_543: 21301086
@@ -15918,21 +15918,20 @@ TextureImporter:
       env_ground_101: 21300202
       env_ground_587: 21301174
       env_ground_432: 21300864
-      env_ground_363: 21300726
       env_ground_72: 21300144
-      env_ground_174: 21300348
       env_ground_422: 21300844
+      env_ground_477: 21300954
+      env_ground_174: 21300348
       env_ground_263: 21300526
       env_ground_386: 21300772
-      env_ground_547: 21301094
-      env_ground_477: 21300954
-      env_ground_10: 21300020
       env_ground_312: 21300624
       env_ground_267: 21300534
+      env_ground_10: 21300020
+      env_ground_547: 21301094
+      env_ground_150: 21300300
       env_ground_468: 21300936
       env_ground_643: 21301286
       env_ground_384: 21300768
-      env_ground_150: 21300300
       env_ground_300: 21300600
       env_ground_574: 21301148
       env_ground_650: 21301300
@@ -15945,6 +15944,7 @@ TextureImporter:
       env_ground_127: 21300254
       env_ground_297: 21300594
       env_ground_304: 21300608
+      env_ground_363: 21300726
       env_ground_86: 21300172
       env_ground_520: 21301040
       env_ground_194: 21300388

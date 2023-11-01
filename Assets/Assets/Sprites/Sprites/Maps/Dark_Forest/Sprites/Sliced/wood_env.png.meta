@@ -890,7 +890,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 8
+  spritePixelsToUnits: 15
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -912,7 +912,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -6992,14 +6992,14 @@ TextureImporter:
       wood_env_202: 21300404
       wood_env_173: 21300346
       wood_env_72: 21300144
+      wood_env_180: 21300360
       wood_env_224: 21300448
       wood_env_235: 21300470
-      wood_env_100: 21300200
-      wood_env_189: 21300378
-      wood_env_275: 21300550
-      wood_env_180: 21300360
-      wood_env_4: 21300008
+      wood_env_245: 21300490
       wood_env_84: 21300168
+      wood_env_189: 21300378
+      wood_env_4: 21300008
+      wood_env_275: 21300550
       wood_env_69: 21300138
       wood_env_19: 21300038
       wood_env_24: 21300048
@@ -7024,13 +7024,15 @@ TextureImporter:
       wood_env_117: 21300234
       wood_env_201: 21300402
       wood_env_190: 21300380
+      wood_env_100: 21300200
       wood_env_22: 21300044
       wood_env_241: 21300482
+      wood_env_134: 21300268
       wood_env_25: 21300050
       wood_env_209: 21300418
       wood_env_249: 21300498
       wood_env_43: 21300086
-      wood_env_134: 21300268
+      wood_env_234: 21300468
       wood_env_68: 21300136
       wood_env_80: 21300160
       wood_env_23: 21300046
@@ -7038,18 +7040,16 @@ TextureImporter:
       wood_env_169: 21300338
       wood_env_18: 21300036
       wood_env_214: 21300428
-      wood_env_245: 21300490
-      wood_env_234: 21300468
-      wood_env_91: 21300182
       wood_env_6: 21300012
+      wood_env_91: 21300182
       wood_env_106: 21300212
       wood_env_17: 21300034
-      wood_env_30: 21300060
-      wood_env_127: 21300254
       wood_env_239: 21300478
+      wood_env_30: 21300060
+      wood_env_150: 21300300
+      wood_env_127: 21300254
       wood_env_74: 21300148
       wood_env_141: 21300282
-      wood_env_150: 21300300
       wood_env_101: 21300202
       wood_env_163: 21300326
       wood_env_254: 21300508

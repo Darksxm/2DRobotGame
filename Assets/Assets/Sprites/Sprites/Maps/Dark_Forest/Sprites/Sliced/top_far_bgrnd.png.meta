@@ -5393,7 +5393,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 8
+  spritePixelsToUnits: 15
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -5415,7 +5415,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -42921,12 +42921,12 @@ TextureImporter:
       top_far_bgrnd_1280: 21302560
       top_far_bgrnd_686: 21301372
       top_far_bgrnd_1009: 21302018
-      top_far_bgrnd_1660: 21303320
+      top_far_bgrnd_1476: 21302952
       top_far_bgrnd_515: 21301030
       top_far_bgrnd_933: 21301866
       top_far_bgrnd_603: 21301206
       top_far_bgrnd_1738: 21303476
-      top_far_bgrnd_1476: 21302952
+      top_far_bgrnd_1660: 21303320
       top_far_bgrnd_1411: 21302822
       top_far_bgrnd_273: 21300546
       top_far_bgrnd_488: 21300976
